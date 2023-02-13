@@ -1,4 +1,5 @@
 import sys
+import re
 
 add = 0
 sub = 0
@@ -15,14 +16,18 @@ inAsm = set()
 def handleResult():
     global add, sub, ins, outs
     if add != sub and ins and outs:
-            assert len(ins) == 1
-            if ins[0] not in inAsm:
+            temp = ins[0]
+            temp = re.sub(r'0x.*\Z', "0xhex", temp);
+            if temp not in inAsm and len(ins) == 1:
+                # ignore ins with length more than 1
+                # we can get full coverage without them
+                # assert len(ins) == 1
                 print("====>")
                 print(ins)
                 print("=====")
                 print(outs)
                 print("<====")
-            inAsm.add(ins[0])
+            inAsm.add(temp)
     add = 0
     sub = 0
     ins.clear()
